@@ -107,7 +107,7 @@ namespace MLPlayer
                     }
 
                     server.PushAgentStates(stateList);
-                    //received.WaitOne ();
+                    received.WaitOne ();
 
                     foreach (var agent in agents.Values)
                     {

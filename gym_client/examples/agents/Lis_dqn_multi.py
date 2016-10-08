@@ -12,7 +12,7 @@ parser.add_argument('--log-file', '-l', default='reward.log', type=str,
                     help='reward log file name')
 args = parser.parse_args()
 
-agent_count = 4
+agent_count = 2
 
 agents = {}
 for i in xrange(agent_count):
