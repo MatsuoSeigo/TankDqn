@@ -21,7 +21,6 @@ namespace MLPlayer
             var originalKey = new Dictionary<string, byte[]>();
             foreach (byte[] key in action.Keys) {
                 originalKey.Add (System.Text.Encoding.UTF8.GetString(key), key);
-                Debug.Log ("key:" + System.Text.Encoding.UTF8.GetString(key) + " value:" + action[key]);
             }
 
             // string:
@@ -50,9 +49,6 @@ namespace MLPlayer
                     break;
                 case "4":
                     fire = true;
-                    break;
-                case "5":
-                    forward = 0;
                     break;
             }
         }

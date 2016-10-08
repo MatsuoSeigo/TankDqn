@@ -15,7 +15,7 @@ class CnnDqnAgent(object):
     epsilon_delta = 1.0 / 10 ** 4.4
     min_eps = 0.1
 
-    actions = [0, 1, 2, 3, 4, 5]
+    actions = [0, 1, 2, 3, 4]
 
     cnn_feature_extractor = 'alexnet_feature_extractor.pickle'
     model = 'bvlc_alexnet.caffemodel'

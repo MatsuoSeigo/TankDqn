@@ -49,10 +49,8 @@ namespace MLPlayer
 
             protected override void OnMessage (MessageEventArgs e)
             {
-                //receive message 
-                Debug.Log(e);
+                //receive message
                 System.Object[] actionList = (System.Object[])packer.Unpack(e.RawData);
-                Debug.Log(actionList.Length);
                 //agent.action.Set ((Dictionary<System.Object,System.Object>)packer.Unpack (e.RawData));
 
                 for (int idx = 0; idx < actionList.Length; idx++)
@@ -64,15 +62,6 @@ namespace MLPlayer
                     }
                     agents[(int)action[originalKey["agent_id"]]].action.Set(action);
                 }
-
-//                foreach (Dictionary<System.Object,System.Object> action in actionList)
-//                {
-//                    var originalKey = new Dictionary<string, byte[]>();
-//                    foreach (byte[] key in action.Keys) {
-//                        originalKey.Add (System.Text.Encoding.UTF8.GetString(key), key);
-//                    }
-//                    agents[(int)action[originalKey["agent_id"]]].action.Set(action);
-//                }
                 SceneController.received.Set ();
 
                 //send state data 

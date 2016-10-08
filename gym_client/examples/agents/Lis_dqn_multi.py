@@ -63,13 +63,14 @@ while episode_count <= total_episode:
                 break
 
         if end_episode:
+            print("end_episode")
             actions = {}
             for key, agent in agents.items():
                 agent.agent_end(env_replies[key].reward)
                 actions[key] = agent.agent_start(reply[key].observation)
-
+            print("agent restarted")
             env_replies = env.step(actions, cycle_counter)
-
+            print("agent first step")
             with open(log_file, 'a') as the_file:
                 the_file.write(str(cycle_counter) +
                                ',' + str(reward_sum) + '\n')

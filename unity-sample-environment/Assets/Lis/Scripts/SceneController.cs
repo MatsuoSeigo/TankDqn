@@ -69,6 +69,7 @@ namespace MLPlayer
 
         public void StartNewEpisode ()
         {
+            Debug.Log("Start New Episode");
             episodeStartTime = Time.time;
             environment.OnReset ();
 
