@@ -35,7 +35,8 @@ while episode_count <= total_episode:
             print("initializing agent{}...".format(key))
             agent.agent_init(
                 use_gpu=args.gpu,
-                depth_image_dim=depth_image_dim * depth_image_count)
+                depth_image_dim=depth_image_dim * depth_image_count,
+                agent_id=key)
 
         print("gym.make...")
         env = gym.make('Lis-v2')

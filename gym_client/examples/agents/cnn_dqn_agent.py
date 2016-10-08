@@ -44,6 +44,7 @@ class CnnDqnAgent(object):
         self.use_gpu = options['use_gpu']
         self.depth_image_dim = options['depth_image_dim']
         self.q_net_input_dim = self.image_feature_dim * self.image_feature_count + self.depth_image_dim
+        self.cnn_feature_extractor = 'alexnet_feature_extractor{}.pickle'.format(key)
 
         if os.path.exists(self.cnn_feature_extractor):
             print("loading... " + self.cnn_feature_extractor),
