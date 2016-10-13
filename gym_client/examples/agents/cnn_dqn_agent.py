@@ -15,7 +15,7 @@ class CnnDqnAgent(object):
     epsilon_delta = 1.0 / 10 ** 4.4
     min_eps = 0.1
 
-    actions = [0, 1, 2, 3, 4]
+    actions = [0, 1, 2, 3, 4, 5, 6]
 
     cnn_feature_extractor = 'alexnet_feature_extractor.pickle'
     model = 'bvlc_alexnet.caffemodel'
@@ -55,9 +55,9 @@ class CnnDqnAgent(object):
             pickle.dump(self.feature_extractor, open(self.cnn_feature_extractor, 'w'))
             print("pickle.dump finished")
 
-        self.time = 0
-        self.epsilon = 1.0  # Initial exploratoin rate
-        self.q_net = QNet(self.use_gpu, self.actions, self.q_net_input_dim)
+        self.time = 1001
+        self.epsilon = 0.15  # Initial exploratoin rate
+        self.q_net = QNet(self.use_gpu, self.actions, self.q_net_input_dim, options['agent_id'])
 
     def agent_start(self, observation):
         obs_array = self._observation_to_featurevec(observation)
@@ -102,12 +102,13 @@ class CnnDqnAgent(object):
         # Exploration decays along the time sequence
         if self.policy_frozen is False:  # Learning ON/OFF
             if self.q_net.initial_exploration < self.time:
+                print('Explonation : %f, %d/%d steps' % (self.epsilon, self.time, self.q_net.initial_exploration))
                 self.epsilon -= self.epsilon_delta
                 if self.epsilon < self.min_eps:
                     self.epsilon = self.min_eps
                 eps = self.epsilon
             else:  # Initial Exploation Phase
-                print("Initial Exploration : %d/%d steps" % (self.time, self.q_net.initial_exploration)),
+                print("Initial Exploration : %d/%d steps" % (self.time, self.q_net.initial_exploration))
                 eps = 1.0
         else:  # Evaluation
             print("Policy is Frozen")
@@ -162,4 +163,6 @@ class CnnDqnAgent(object):
 
         # Time count
         if self.policy_frozen is False:
+            self.q_net.model_dump()
             self.time += 1
+            

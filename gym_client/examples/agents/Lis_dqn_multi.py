@@ -12,7 +12,7 @@ parser.add_argument('--log-file', '-l', default='reward.log', type=str,
                     help='reward log file name')
 args = parser.parse_args()
 
-agent_count = 2
+agent_count = 3
 
 agents = {}
 for i in xrange(agent_count):
@@ -42,11 +42,11 @@ while episode_count <= total_episode:
         env = gym.make('Lis-v2')
 
         print("first step...")
-        reply = env.reset()
+        env_replies = env.reset()
 
         actions = {}
         for key, agent in agents.items():
-            actions[key] = agent.agent_start(reply[key].observation)
+            actions[key] = agent.agent_start(env_replies[key].observation)
 
         print(actions)
         env_replies = env.step(actions, cycle_counter)
@@ -67,7 +67,7 @@ while episode_count <= total_episode:
             actions = {}
             for key, agent in agents.items():
                 agent.agent_end(env_replies[key].reward)
-                actions[key] = agent.agent_start(reply[key].observation)
+                actions[key] = agent.agent_start(env_replies[key].observation)
             print("agent restarted")
             env_replies = env.step(actions, cycle_counter)
             print("agent first step")
@@ -81,10 +81,10 @@ while episode_count <= total_episode:
             actions = {}
             for key, agent in agents.items():
                 print("agent.agent_step")
-                action, eps, q_now, obs_array = agent.agent_step(reply[key].reward, reply[key].observation)
+                action, eps, q_now, obs_array = agent.agent_step(env_replies[key].reward, env_replies[key].observation)
                 actions[key] = action
                 print("agent.agent_step_update")
-                agent.agent_step_update(reply[key].reward, action, eps, q_now, obs_array)
+                agent.agent_step_update(env_replies[key].reward, action, eps, q_now, obs_array)
             print("env.step")
             env_replies = env.step(actions, cycle_counter)
 

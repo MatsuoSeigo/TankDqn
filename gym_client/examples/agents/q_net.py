@@ -4,6 +4,8 @@ import copy
 import numpy as np
 from chainer import cuda, FunctionSet, Variable, optimizers
 import chainer.functions as F
+import six.moves.cPickle as pickle
+import os
 
 
 class QNet:
@@ -15,7 +17,7 @@ class QNet:
     data_size = 10**5  # Data size of history. original: 10^6
     hist_size = 1 #original: 4
 
-    def __init__(self, use_gpu, enable_controller, dim):
+    def __init__(self, use_gpu, enable_controller, dim, agent_id):
         self.use_gpu = use_gpu
         self.num_of_actions = len(enable_controller)
         self.enable_controller = enable_controller
@@ -24,12 +26,21 @@ class QNet:
         print("Initializing Q-Network...")
 
         hidden_dim = 256
-        self.model = FunctionSet(
-            l4=F.Linear(self.dim*self.hist_size, hidden_dim, wscale=np.sqrt(2)),
-            q_value=F.Linear(hidden_dim, self.num_of_actions,
-                             initialW=np.zeros((self.num_of_actions, hidden_dim),
-                                               dtype=np.float32))
-        )
+
+        self.model_name = 'qnet_model{}.pickle'.format(agent_id)
+
+        if os.path.exists(self.model_name):
+            print 'loading q model {}'.format(self.model_name)
+            self.model = pickle.load(open(self.model_name))
+        else:
+            print 'create q model {}'.format(self.model_name)
+            self.model = FunctionSet(
+                l4=F.Linear(self.dim*self.hist_size, hidden_dim, wscale=np.sqrt(2)),
+                q_value=F.Linear(hidden_dim, self.num_of_actions,
+                                 initialW=np.zeros((self.num_of_actions, hidden_dim),
+                                                   dtype=np.float32))
+            )
+
         if self.use_gpu >= 0:
             self.model.to_gpu()
 
@@ -44,6 +55,10 @@ class QNet:
                   np.zeros((self.data_size, 1), dtype=np.int8),
                   np.zeros((self.data_size, self.hist_size, self.dim), dtype=np.uint8),
                   np.zeros((self.data_size, 1), dtype=np.bool)]
+
+    def model_dump(self):
+        print 'dump q model {}'.format(self.model_name)
+        pickle.dump(self.model, open(self.model_name, 'w'))
 
     def forward(self, state, action, reward, state_dash, episode_end):
         num_of_batch = state.shape[0]
@@ -152,20 +167,19 @@ class QNet:
 
         if np.random.rand() < epsilon:
             index_action = np.random.randint(0, self.num_of_actions)
-            print(" Random"),
+            print(" Random")
         else:
             if self.use_gpu >= 0:
                 index_action = np.argmax(q.get())
             else:
                 index_action = np.argmax(q)
-            print("#Greedy"),
+            print("#Greedy")
         return self.index_to_action(index_action), q
 
     def target_model_update(self):
         self.model_target = copy.deepcopy(self.model)
+    def action_to_index(self, action):
+        return self.enable_controller.index(action)
 
     def index_to_action(self, index_of_action):
         return self.enable_controller[index_of_action]
-
-    def action_to_index(self, action):
-        return self.enable_controller.index(action)

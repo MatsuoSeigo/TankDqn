@@ -4,9 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Field
   - Tank
-  - Shell
+  - Field
   layers:
   - Default
   - TransparentFX
